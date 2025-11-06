@@ -2,49 +2,52 @@
 
 namespace App\Services;
 
-use App\Entity\House;
+use App\Entity\SummerHouse;
+use App\Dto\SummerHouseDto;
+use App\Repository\SummerHouseRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class SummerHouseService {
-    public function __construct (private string $filepath) {
+class SummerHouseService 
+{
+    public function __construct(
+        private SummerHouseRepository $summerHouseRepository,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator
+    ) {}
 
+    public function getAllHouses(): array
+    {
+        return $this->summerHouseRepository->findAll();
     }
 
-    public function get_summer_houses() : array {
-        $houses = [];
-        
-        if (!file_exists($this->filepath)) {
-            return $houses;
-        }
-        
-        $file = fopen($this->filepath, "r");
-
-        while (($data = fgetcsv($file)) !== FALSE) {
-
-            $houses[] = new House(
-                id: (int)$data[0],
-                name: $data[1],
-                price: (int)$data[2],
-                sleeps: (int)$data[3],
-                distance_to_sea: (int)$data[4],
-                amenities: $data[5],
-                is_available: (bool)$data[6]
-            );
-        }
-
-        fclose($file);
-        return $houses;
+    public function getHouse(int $houseId): ?SummerHouse
+    {
+        return $this->summerHouseRepository->find($houseId);
     }
 
-    public function get_available_houses(): array {
-        $allHouses = $this->get_summer_houses();
-        $availableHouses = [];
-        
-        foreach ($allHouses as $house) {
-            if ($house->is_available) {
-                $availableHouses[] = $house;
-            }
+    public function getAvailableHouses(): array
+    {
+        return $this->summerHouseRepository->findAvailableHouses();
+    }
+
+    public function createHouse(SummerHouseDto $houseDto): SummerHouse
+    {
+        $errors = $this->validator->validate($houseDto);
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException('Invalid house data');
         }
-        
-        return $availableHouses;
+
+        $house = new SummerHouse();
+        $house->setHouseName($houseDto->name);
+        $house->setPrice($houseDto->price);
+        $house->setSleeps($houseDto->sleeps);
+        $house->setDistanceToSea($houseDto->distanceToSea);
+        $house->setHasTV($houseDto->hasTV);
+
+        $this->entityManager->persist($house);
+        $this->entityManager->flush();
+
+        return $house;
     }
 }

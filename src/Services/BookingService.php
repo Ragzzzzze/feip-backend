@@ -3,76 +3,78 @@
 namespace App\Services;
 
 use App\Entity\Booking;
+use App\Entity\User;
+use App\Entity\SummerHouse;
+use App\Dto\BookingDto;
+use App\Repository\BookingRepository;
+use App\Repository\UserRepository;
+use App\Repository\SummerHouseRepository;
+use App\Enum\BookingStatus;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class BookingService {
-    public function __construct (private string $filepath) {
+class BookingService 
+{
+    public function __construct(
+        private BookingRepository $bookingRepository,
+        private UserRepository $userRepository, 
+        private SummerHouseRepository $summerHouseRepository,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator
+    ) {}
 
+    public function createBooking(BookingDto $bookingDto): Booking
+    {
+
+        $errors = $this->validator->validate($bookingDto);
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException('Invalid booking data');
+        }
+
+        $house = $this->summerHouseRepository->find($bookingDto->houseId);
+
+        if (!$house) {
+            throw new \InvalidArgumentException('House not found');
+        }
+
+        $user = $this->userRepository->findOneBy(['phoneNumber' => $bookingDto->phoneNumber]);
+
+        if (!$user) {
+            $user = new User();
+            $user->setPhoneNumber($bookingDto->phoneNumber);
+            $user->setName(''); // или можно передать имя если есть в DTO
+            $this->entityManager->persist($user);
+            // НЕ делаем flush здесь - сделаем один flush в конце
+        }
+
+        $booking = new Booking();
+        $booking->setUser($user);
+        $booking->setHouse($house);
+        $booking->setComment($bookingDto->comment);
+        $booking->setStatus(BookingStatus::PENDING);
+
+        $this->entityManager->persist($booking);
+        $this->entityManager->flush();
+
+        return $booking;
     }
 
-    private function get_bookings(): array {
-        $bookings = [];
+    public function updateBookingComment(int $bookingId, string $newComment): bool
+    {
+        $booking = $this->bookingRepository->find($bookingId);
         
-        if (!file_exists($this->filepath)) {
-            return $bookings;
-        }
+        if (!$booking) { return false; }
 
-        $file = fopen($this->filepath, "r");
-        
-            
-        while (($data = fgetcsv($file)) !== FALSE) {
+        $booking->setComment($newComment);
 
-            $bookings[] = new Booking(
-                id: (int)$data[0],
-                house_id: (int)$data[1],
-                guest_name: $data[2],
-                phone_number: $data[3],
-                status: $data[4],
-                comment: $data[5]
-            );
-        }
-        fclose($file);
-        
+        $this->entityManager->flush();
+
+        return true;
+    }
+
+    public function getUserBookings(string $phoneNumber): array
+    {
+        $bookings = $this->bookingRepository->findByNumber($phoneNumber);
         return $bookings;
-
-    }
-    
-    public function create_booking (Booking $booking) : bool {
-        $file = fopen($this->filepath, "a");
-
-        if ($file == false) {
-            return false;
-        }
-        
-
-        $succes = fputcsv($file, $booking->to_array());
-        fclose($file);
-        
-        return $succes !== false;
-    }
-
-    public function change_booking_commentary (Booking $booking, string $new_comment) : bool {
-        $bookings = $this->get_bookings();
-        $updated = false;
-        
-        foreach ($bookings as $booking) {
-            if ($booking->id === $bookingId) {
-                $booking->comment = $new_Comment;
-                $updated = true;
-                break;
-            }
-        }
-        
-        if ($updated) {
-            $file = fopen($this->filepath, "w");
-            $booking_arary = $booking->to_array();
-
-            fputcsv($file, $booking_arary);
-
-            fclose($file);
-        }
-        
-        return false;
-
-
     }
 }

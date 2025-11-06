@@ -2,43 +2,48 @@
 
 namespace App\Controller;
 
-use App\Entity\Booking;
+use App\Dto\BookingDto;
 use App\Services\BookingService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class BookingController extends AbstractController
 {
     public function __construct(
-        private BookingService $booking_service
+        private BookingService $bookingService
     ) {}
 
     #[Route('api/booking', name: 'app_booking_create', methods: ["POST"])]
-    public function app_booking_create(Request $request): Response {
+    public function app_booking_create(Request $request): JsonResponse {
         if (empty($request->toArray())) {
             return new JsonResponse(["error" => "Request body is empty"], 422);
         }
 
-        $values = $request->toArray();
+        $data = $request->toArray();
 
         try {
-            $booking = new Booking(
-                id: (int)$values["id"],
-                house_id: (int)$values["house_id"],
-                guest_name: $values["guest_name"],
-                phone_number: $values["phone_number"],
-                status: $values["status"] ?? "pending",
-                comment: $values["comment"] ?? ""
+            $bookingDto = new BookingDto(
+                phoneNumber: $data['phoneNumber'],
+                houseId: (int)$data['houseId'],
+                comment: $data['comment'] ?? null
             );
             
-            $this->bookingService->create_booking($booking);
+            $booking = $this->bookingService->createBooking($bookingDto);
             
             return new JsonResponse([
                 "status" => "OK",
                 "message" => "Booking created successfully",
+                "booking_id" => $booking->getId()
             ], 201);
             
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse([
+                "error" => $e->getMessage()
+            ], 400);
+
         } catch (\Exception $e) {
             return new JsonResponse([
                 "error" => "Failed to create booking: " . $e->getMessage()
@@ -47,19 +52,19 @@ class BookingController extends AbstractController
     }
 
     #[Route('api/booking', name:'app_booking_change_commentary', methods: ['PATCH'])]
-    public function app_booking_change_commentary(Request $request): Response
+    public function app_booking_change_commentary(Request $request): JsonResponse
     {
         if (empty($request->toArray())) {
             return new JsonResponse(["error" => "request body is empty"], 422);
         }
 
-        $values = $request->toArray();
+        $data = $request->toArray();
 
         try {
-        $result = $this->bookingService->change_booking_commentary(
-            (int)$values["id"], 
-            $values["comment"]
-        );
+            $result = $this->bookingService->updateBookingComment(
+                (int)$data['id'], 
+                $data['comment'] ?? ''
+            );
         
             if ($result) {
                 return new JsonResponse([
@@ -79,22 +84,43 @@ class BookingController extends AbstractController
         }
     }
 
-    #[Route('/api/bookings', name: 'app_booking_get', methods: ['GET'])]
-    public function app_booking_get(): Response
+    #[Route('/api/user/bookings', name: 'app_user_bookings', methods: ['GET'])]
+    public function getUserBookings(Request $request): JsonResponse
     {
+        $phoneNumber = $request->query->get('phone_number');
+        
+        if (!$phoneNumber) {
+            return new JsonResponse([
+                "error" => "Phone number is required"
+            ], 400);
+        }
+
         try {
-            $bookings = $this->bookingService->get_bookings();
+            $bookings = $this->bookingService->getUserBookings($phoneNumber);
+        
+            
+            $bookingsArray = array_map(function($booking) {
+                return [
+                    'id' => $booking->getId(),
+                    'guestName' => $booking->getUser()->getName(),
+                    'phoneNumber' => $booking->getUser()->getPhoneNumber(),
+                    'houseName' => $booking->getHouse()->getHouseName(),
+                    'status' => $booking->getStatus(),
+                    'comment' => $booking->getComment()
+                ];
+            }, $bookings);
             
             return new JsonResponse([
                 'status' => 'OK',
-                'count' => count($bookings),
-                'bookings' => $bookings
+                'count' => count($bookingsArray),
+                'bookings' => $bookingsArray
             ], 200);
             
         } catch (\Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to retrieve bookings: ' . $e->getMessage()
+                'error' => 'Failed to retrieve user bookings: ' . $e->getMessage()
             ], 500);
         }
     }
+
 }
