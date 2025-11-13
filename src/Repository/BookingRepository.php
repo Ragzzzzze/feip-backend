@@ -13,6 +13,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class BookingRepository extends ServiceEntityRepository
 {
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Booking::class);
+    }
+    
     public function findByNumber(string $phoneNumber): array
     {
         return $this->createQueryBuilder('b')
