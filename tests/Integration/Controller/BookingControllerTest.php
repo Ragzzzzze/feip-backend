@@ -53,7 +53,7 @@ class BookingControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         if (500 === $response->getStatusCode()) {
-            echo 'ERROR: '.$response->getContent()."\n";
+            echo 'ERROR: ' . $response->getContent() . "\n";
         }
         $this->assertEquals(201, $response->getStatusCode());
 

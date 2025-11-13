@@ -21,6 +21,9 @@ return (new PhpCsFixer\Config())
             'imports_order' => ['class', 'function', 'const'],
             'sort_algorithm' => 'alpha',
         ],
+        'concat_space' => [
+            'spacing' => 'one',
+        ],
     ])
     ->setFinder($finder)
     ->setRiskyAllowed(true)

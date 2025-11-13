@@ -54,7 +54,7 @@ class UserController extends AbstractController
             ], 400);
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to create user: '.$e->getMessage(),
+                'error' => 'Failed to create user: ' . $e->getMessage(),
             ], 500);
         }
     }

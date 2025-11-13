@@ -18,7 +18,7 @@ class SummerHouseRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, SummerHouse::class);
     }
-    
+
     public function findAvailableHouses(
         array $activeStatus = [BookingStatus::PENDING, BookingStatus::CONFIRMED, BookingStatus::CANCELLED],
     ): array {

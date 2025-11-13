@@ -17,7 +17,7 @@ class BookingRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Booking::class);
     }
-    
+
     public function findByNumber(string $phoneNumber): array
     {
         return $this->createQueryBuilder('b')

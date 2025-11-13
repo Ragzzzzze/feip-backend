@@ -40,7 +40,7 @@ class SummerHouseController extends AbstractController
             return new JsonResponse($housesArray);
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to retrieve houses: '.$e->getMessage(),
+                'error' => 'Failed to retrieve houses: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -65,7 +65,7 @@ class SummerHouseController extends AbstractController
             return new JsonResponse($housesArray);
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to retrieve available houses: '.$e->getMessage(),
+                'error' => 'Failed to retrieve available houses: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -101,7 +101,7 @@ class SummerHouseController extends AbstractController
             ], 400);
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to create house: '.$e->getMessage(),
+                'error' => 'Failed to create house: ' . $e->getMessage(),
             ], 500);
         }
     }

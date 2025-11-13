@@ -52,7 +52,7 @@ class BookingController extends AbstractController
             ], 400);
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to create booking: '.$e->getMessage(),
+                'error' => 'Failed to create booking: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -84,7 +84,7 @@ class BookingController extends AbstractController
             }
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to update booking comment: '.$e->getMessage(),
+                'error' => 'Failed to update booking comment: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -121,7 +121,7 @@ class BookingController extends AbstractController
             ], 200);
         } catch (Exception $e) {
             return new JsonResponse([
-                'error' => 'Failed to retrieve user bookings: '.$e->getMessage(),
+                'error' => 'Failed to retrieve user bookings: ' . $e->getMessage(),
             ], 500);
         }
     }
