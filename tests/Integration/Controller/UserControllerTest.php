@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -22,7 +24,6 @@ class UserControllerTest extends WebTestCase
 
     public function testCreateUserSuccess(): void
     {
-
         $this->client->request(
             'POST',
             '/api/users/',
@@ -31,14 +32,13 @@ class UserControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'name' => 'John Doe',
-                'phone_number' => '123456789'
+                'phone_number' => '123456789',
             ])
         );
-        
-        
+
         $response = $this->client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('OK', $responseData['status']);
         $this->assertEquals('User created successfully', $responseData['message']);
@@ -58,7 +58,7 @@ class UserControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(422, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('Request body is empty', $responseData['error']);
     }

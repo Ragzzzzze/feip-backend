@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Service;
 
 use App\Dto\SummerHouseDto;
@@ -8,8 +10,8 @@ use App\Repository\SummerHouseRepository;
 use App\Services\SummerHouseService;
 use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SummerHouseServiceTest extends TestCase
 {
@@ -47,7 +49,7 @@ class SummerHouseServiceTest extends TestCase
         $this->entityManagerMock->expects($this->once())
             ->method('persist')
             ->with($this->isInstanceOf(SummerHouse::class));
-            
+
         $this->entityManagerMock->expects($this->once())
             ->method('flush');
 
@@ -65,7 +67,7 @@ class SummerHouseServiceTest extends TestCase
     {
         $house1 = new SummerHouse();
         $house1->setHouseName('House 1');
-        
+
         $house2 = new SummerHouse();
         $house2->setHouseName('House 2');
 
@@ -93,5 +95,3 @@ class SummerHouseServiceTest extends TestCase
         $this->assertEquals('Available House', $result[0]->getHouseName());
     }
 }
-
-

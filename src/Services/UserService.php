@@ -1,37 +1,48 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
-use App\Entity\User;
 use App\Dto\UserDto;
+use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserService
 {
+    private EntityManagerInterface $entityManager;
+    private ValidatorInterface $validator;
+    private UserRepository $userRepository;
+
     public function __construct(
-        private UserRepository $userRepository,
-        private EntityManagerInterface $entityManager,
-        private ValidatorInterface $validator
-    ) {}
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator,
+        UserRepository $userRepository,
+    ) {
+        $this->entityManager = $entityManager;
+        $this->validator = $validator;
+        $this->userRepository = $userRepository;
+    }
 
     public function createUser(UserDto $userDto): User
     {
         if (empty($userDto->name) || empty($userDto->phoneNumber)) {
-            throw new \InvalidArgumentException('Name and phone number are required');
+            throw new InvalidArgumentException('Name and phone number are required');
         }
 
         $errors = $this->validator->validate($userDto);
         if (count($errors) > 0) {
-            throw new \InvalidArgumentException('Invalid user data');
+            throw new InvalidArgumentException('Invalid user data');
         }
 
         $existingUser = $this->userRepository->findOneBy(['phoneNumber' => $userDto->phoneNumber]);
         if ($existingUser) {
-            throw new \InvalidArgumentException('User with this phone already exists');
+            throw new InvalidArgumentException('User with this phone already exists');
         }
-        
+
         $user = new User();
         $user->setName($userDto->name);
         $user->setPhoneNumber($userDto->phoneNumber);
@@ -40,10 +51,5 @@ class UserService
         $this->entityManager->flush();
 
         return $user;
-    }
-
-    public function findUserByPhone(string $phoneNumber): ?User
-    {
-        return $this->userRepository->findOneBy(['phoneNumber' => $phoneNumber]);
     }
 }

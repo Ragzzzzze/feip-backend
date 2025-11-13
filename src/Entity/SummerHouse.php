@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\SummerHouseRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SummerHouseRepository::class)]
-#[ORM\Table(name: 'houses')] 
-class SummerHouse {
-
+#[ORM\Table(name: 'houses')]
+class SummerHouse
+{
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -29,57 +31,68 @@ class SummerHouse {
     #[ORM\Column]
     private bool $hasTV = false;
 
-    public function getId() : ?int { 
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function getHouseName() : ?string { 
-        return $this->houseName; 
+    public function getHouseName(): ?string
+    {
+        return $this->houseName;
     }
 
-    public function getPrice() : ?int { return 
-        $this->price; 
+    public function getPrice(): ?int
+    {
+        return $this->price;
     }
 
-    public function getDistanceToSea() : ?int { 
-        return $this->distanceToSea; 
+    public function getDistanceToSea(): ?int
+    {
+        return $this->distanceToSea;
     }
 
-    public function getSleeps() : ?int { 
-        return $this->sleeps; 
+    public function getSleeps(): ?int
+    {
+        return $this->sleeps;
     }
 
-    public function getHasTV() : ?bool { 
-        return $this->hasTV; 
+    public function getHasTV(): bool
+    {
+        return $this->hasTV;
     }
 
-    public function setId() : ?int { 
-        return $this->id; 
-    }
-    
-    public function setHouseName(string $houseName) : static { 
+    public function setHouseName(string $houseName): static
+    {
         $this->houseName = $houseName;
-        return $this; 
+
+        return $this;
     }
 
-    public function setPrice(int $price) : static {
+    public function setPrice(int $price): static
+    {
         $this->price = $price;
-        return $this; 
+
+        return $this;
     }
 
-    public function setSleeps(int $sleeps): static {
+    public function setSleeps(int $sleeps): static
+    {
         $this->sleeps = $sleeps;
+
         return $this;
     }
 
-    public function setDistanceToSea(int $distanceToSea) : static { 
+    public function setDistanceToSea(int $distanceToSea): static
+    {
         $this->distanceToSea = $distanceToSea;
-        return $this; 
-    }
 
-    public function setHasTV(?bool $hasTV) : static {
-        $this->hasTV = $hasTV;
         return $this;
     }
 
+    public function setHasTV(bool $hasTV): static
+    {
+        $this->hasTV = $hasTV;
+
+        return $this;
+    }
 }

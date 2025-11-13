@@ -1,20 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Unit\Service;
 
 use App\Dto\BookingDto;
 use App\Entity\Booking;
-use App\Entity\User;
 use App\Entity\SummerHouse;
-use App\Repository\BookingRepository;
-use App\Repository\UserRepository;
-use App\Repository\SummerHouseRepository;
-use App\Services\BookingService;
+use App\Entity\User;
 use App\Enum\BookingStatus;
+use App\Repository\BookingRepository;
+use App\Repository\SummerHouseRepository;
+use App\Repository\UserRepository;
+use App\Services\BookingService;
 use Doctrine\ORM\EntityManagerInterface;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BookingServiceTest extends TestCase
 {
@@ -52,17 +55,17 @@ class BookingServiceTest extends TestCase
 
         $house = new SummerHouse();
         $house->setId(1);
-        
+
         $user = new User();
         $user->setPhoneNumber('+123456789');
 
         $this->validatorMock->method('validate')
             ->willReturn(new ConstraintViolationList());
-        
+
         $this->houseRepositoryMock->method('find')
             ->with(1)
             ->willReturn($house);
-            
+
         $this->userRepositoryMock->method('findOneBy')
             ->with(['phoneNumber' => '+123456789'])
             ->willReturn($user);
@@ -70,7 +73,7 @@ class BookingServiceTest extends TestCase
         $this->entityManagerMock->expects($this->once())
             ->method('persist')
             ->with($this->isInstanceOf(Booking::class));
-            
+
         $this->entityManagerMock->expects($this->once())
             ->method('flush');
 
@@ -89,12 +92,12 @@ class BookingServiceTest extends TestCase
 
         $this->validatorMock->method('validate')
             ->willReturn(new ConstraintViolationList());
-            
+
         $this->houseRepositoryMock->method('find')
             ->with(999)
             ->willReturn(null);
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('House not found');
 
         $this->bookingService->createBooking($bookingDto);
@@ -130,14 +133,14 @@ class BookingServiceTest extends TestCase
     {
         $user = new User();
         $user->setPhoneNumber('+123456789');
-        
+
         $booking = new Booking();
         $booking->setUser($user);
 
         $this->userRepositoryMock->method('findOneBy')
             ->with(['phoneNumber' => '+123456789'])
             ->willReturn($user);
-            
+
         $this->bookingRepositoryMock->method('findByNumber')
             ->with($user->getPhoneNumber())
             ->willReturn([$booking]);

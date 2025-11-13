@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Dto;
 
-class SummerHouseDto {
+class SummerHouseDto
+{
     public function __construct(
         public string $name,
         public int $price,
         public int $sleeps,
         public int $distanceToSea,
-        public string $hasTV,
-    ) {}
+        public bool $hasTV,
+    ) {
+    }
 }

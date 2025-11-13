@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Controller;
 
 use App\Entity\SummerHouse;
@@ -29,7 +31,7 @@ class SummerHouseControllerTest extends WebTestCase
         $house1->setSleeps(4);
         $house1->setDistanceToSea(50);
         $house1->setHasTV(true);
-        
+
         $house2 = new SummerHouse();
         $house2->setHouseName('Villa 2');
         $house2->setPrice(150.0);
@@ -45,7 +47,7 @@ class SummerHouseControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertCount(2, $responseData);
         $this->assertEquals('Villa 1', $responseData[0]['name']);
@@ -65,11 +67,10 @@ class SummerHouseControllerTest extends WebTestCase
         $this->entityManager->flush();
 
         $this->client->request('GET', '/api/available-houses');
-        
-        
+
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertCount(1, $responseData);
         $this->assertEquals('Available Villa', $responseData[0]['name']);
@@ -88,13 +89,13 @@ class SummerHouseControllerTest extends WebTestCase
                 'price' => 200.0,
                 'sleeps' => 6,
                 'distanceToSea' => 150,
-                'hasTV' => true
+                'hasTV' => true,
             ])
         );
 
         $response = $this->client->getResponse();
         $this->assertEquals(201, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('OK', $responseData['status']);
         $this->assertEquals('House created successfully', $responseData['message']);
@@ -118,7 +119,7 @@ class SummerHouseControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(422, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('Request body is empty', $responseData['error']);
     }

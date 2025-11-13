@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional\Controller;
 
+use App\Entity\Booking;
 use App\Entity\SummerHouse;
 use App\Entity\User;
-use App\Entity\Booking;
 use App\Enum\BookingStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -32,7 +34,7 @@ class BookingControllerTest extends WebTestCase
         $house->setSleeps(4);
         $house->setDistanceToSea(100);
         $house->setHasTV(true);
-        
+
         $this->entityManager->persist($house);
         $this->entityManager->flush();
 
@@ -45,16 +47,16 @@ class BookingControllerTest extends WebTestCase
             json_encode([
                 'phoneNumber' => '+123456789',
                 'houseId' => $house->getId(),
-                'comment' => 'Test booking comment'
+                'comment' => 'Test booking comment',
             ])
         );
 
         $response = $this->client->getResponse();
-        if ($response->getStatusCode() === 500) {
-            echo "ERROR: " . $response->getContent() . "\n";
+        if (500 === $response->getStatusCode()) {
+            echo 'ERROR: '.$response->getContent()."\n";
         }
         $this->assertEquals(201, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('OK', $responseData['status']);
         $this->assertEquals('Booking created successfully', $responseData['message']);
@@ -74,7 +76,7 @@ class BookingControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(422, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('Request body is empty', $responseData['error']);
     }
@@ -90,13 +92,13 @@ class BookingControllerTest extends WebTestCase
             json_encode([
                 'phoneNumber' => '+123456789',
                 'houseId' => 999,
-                'comment' => 'Test comment'
+                'comment' => 'Test comment',
             ])
         );
 
         $response = $this->client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertStringContainsString('House not found', $responseData['error']);
     }
@@ -106,14 +108,14 @@ class BookingControllerTest extends WebTestCase
         $user = new User();
         $user->setName('Test User');
         $user->setPhoneNumber('123456789');
-        
+
         $house = new SummerHouse();
         $house->setHouseName('Test House');
         $house->setPrice(100.0);
         $house->setSleeps(4);
         $house->setDistanceToSea(50);
         $house->setHasTV(true);
-        
+
         $booking = new Booking();
         $booking->setUser($user);
         $booking->setHouse($house);
@@ -129,7 +131,7 @@ class BookingControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('OK', $responseData['status']);
         $this->assertCount(1, $responseData['bookings']);
@@ -142,7 +144,7 @@ class BookingControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals(400, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('Phone number is required', $responseData['error']);
     }
@@ -152,14 +154,14 @@ class BookingControllerTest extends WebTestCase
         $user = new User();
         $user->setName('Test User');
         $user->setPhoneNumber('+123456789');
-        
+
         $house = new SummerHouse();
         $house->setHouseName('Test House');
         $house->setPrice(100.0);
         $house->setSleeps(4);
         $house->setDistanceToSea(50);
         $house->setHasTV(true);
-        
+
         $booking = new Booking();
         $booking->setUser($user);
         $booking->setHouse($house);
@@ -181,13 +183,13 @@ class BookingControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'id' => $bookingId,
-                'comment' => 'Updated comment'
+                'comment' => 'Updated comment',
             ])
         );
 
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
-        
+
         $responseData = json_decode($response->getContent(), true);
         $this->assertEquals('OK', $responseData['status']);
         $this->assertEquals('Booking comment updated successfully', $responseData['message']);

@@ -1,16 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\BookingRepository;
 use App\Enum\BookingStatus;
+use App\Repository\BookingRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
-#[ORM\Table(name: 'bookings')] 
-class Booking {
-
-    public function __construct() {
+#[ORM\Table(name: 'bookings')]
+class Booking
+{
+    public function __construct()
+    {
         $this->status = BookingStatus::PENDING;
     }
 
@@ -29,53 +32,60 @@ class Booking {
 
     #[ORM\Column(enumType: BookingStatus::class)]
     private ?BookingStatus $status = null;
-    
+
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $comment = null;
 
-    public function getId() : ?int { 
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function getUser() : ?User { 
+    public function getUser(): ?User
+    {
         return $this->client;
     }
 
-    public function getHouse() : ?SummerHouse { 
+    public function getHouse(): ?SummerHouse
+    {
         return $this->house;
     }
-    
-    public function getStatus() : ?BookingStatus {
-        return $this->status; 
+
+    public function getStatus(): ?BookingStatus
+    {
+        return $this->status;
     }
 
-    public function getComment() : ?string { 
-        return $this->comment; 
+    public function getComment(): ?string
+    {
+        return $this->comment;
     }
 
-    public function setId(?int $id) : static { 
-        $this->id = $id;
-        return $this->id; 
-    }
-    
-    public function setUser(?User $client) : static { 
+    public function setUser(?User $client): static
+    {
         $this->client = $client;
-        return $this; 
-    }
 
-    public function setHouse(?SummerHouse $house) : static {
-        $this->house = $house;
-        return $this; 
-    }
-
-    public function setStatus(BookingStatus $status) : static { 
-        $this->status = $status;
-        return $this; 
-    }
-
-    public function setComment(string $comment) : static {
-        $this->comment = $comment;
         return $this;
     }
 
+    public function setHouse(?SummerHouse $house): static
+    {
+        $this->house = $house;
+
+        return $this;
+    }
+
+    public function setStatus(BookingStatus $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function setComment(string $comment): static
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
 }
