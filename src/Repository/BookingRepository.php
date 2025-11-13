@@ -6,6 +6,9 @@ namespace App\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
+/**
+ * @extends ServiceEntityRepository<Booking>
+ */
 class BookingRepository extends ServiceEntityRepository
 {
     public function findByNumber(string $phoneNumber): array

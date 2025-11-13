@@ -7,6 +7,9 @@ namespace App\Repository;
 use App\Enum\BookingStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
+/**
+ * @extends ServiceEntityRepository<SummerHouse>
+ */
 class SummerHouseRepository extends ServiceEntityRepository
 {
     public function findAvailableHouses(
