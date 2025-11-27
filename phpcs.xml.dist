@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/squizlabs/php_codesniffer/phpcs.xsd">
+
+    <arg name="basepath" value="."/>
+    <arg name="cache" value=".phpcs-cache"/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+
+    <rule ref="PSR12"/>
+
+    <file>src/</file>
+    <file>tests/</file>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/storage/*</exclude-pattern>
+    <exclude-pattern>*/bootstrap/*</exclude-pattern>
+
+    <rule ref='Generic.Classes.DuplicateClassName'/>
+    <rule ref='Generic.CodeAnalysis.AssignmentInCondition'/>
+    <rule ref='Generic.CodeAnalysis.EmptyStatement'/>
+    <rule ref='Generic.CodeAnalysis.UnconditionalIfStatement'/>
+    <rule ref='Generic.NamingConventions.CamelCapsFunctionName'/>
+    <rule ref='Generic.NamingConventions.ConstructorName'/>
+    <rule ref='Generic.NamingConventions.UpperCaseConstantName'/>
+    <rule ref='PSR12.Classes.ClosingBrace'/>
+
+    <rule ref='Squiz.Scope.StaticThisUsage'/>
+    <rule ref='Squiz.PHP.NonExecutableCode'/>
+
+    <rule ref="Squiz.Commenting.FunctionComment.Missing">
+        <exclude-pattern>*</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Commenting.ClassComment.Missing">
+        <exclude-pattern>*</exclude-pattern>
+    </rule>
+
+    <rule ref="Squiz.Commenting.VariableComment.Missing">
+        <exclude-pattern>*</exclude-pattern>
+    </rule>
+
+    <rule ref="Generic.Metrics.NestingLevel.TooHigh">
+        <properties>
+            <property name="absoluteNestingLevel" value="4"/>
+            <property name="warningNestingLevel" value="3"/>
+        </properties>
+    </rule>
+
+    <rule ref="Generic.NamingConventions.CamelCapsFunctionName">
+        <exclude-pattern>src/Entity/SummerHouse.php</exclude-pattern>
+    </rule>
+
+</ruleset>
