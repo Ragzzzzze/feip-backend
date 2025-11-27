@@ -41,7 +41,7 @@ class Booking
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getClient(): ?User
     {
         return $this->client;
     }
@@ -61,7 +61,7 @@ class Booking
         return $this->comment;
     }
 
-    public function setUser(?User $client): static
+    public function setClient(?User $client): static
     {
         $this->client = $client;
 

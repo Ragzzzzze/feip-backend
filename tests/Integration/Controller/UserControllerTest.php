@@ -33,6 +33,8 @@ class UserControllerTest extends WebTestCase
             json_encode([
                 'name' => 'John Doe',
                 'phone_number' => '123456789',
+                'password' => 'password123',
+                'roles' => ['ROLE_USER']
             ])
         );
 

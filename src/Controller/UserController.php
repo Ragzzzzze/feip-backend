@@ -12,15 +12,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
     public function __construct(
         private UserService $userService,
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
-    #[Route('/api/users/', name: 'create_user', methods: ['POST'])]
+    #[Route('/api/users/', name: 'api_users_create', methods: ['POST'])]
     public function createUser(Request $request): JsonResponse
     {
         $data = $request->toArray();
@@ -29,16 +31,18 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => 'Request body is empty'], 422);
         }
 
-        if (!isset($data['name']) || !isset($data['phone_number'])) {
+        if (!isset($data['name']) || !isset($data['phone_number']) || !isset($data['password']) || !isset($data['roles'])) {
             return new JsonResponse([
-                'error' => 'Missing required fields: name and phone_number are required',
+                'error' => 'Missing required fields',
             ], 400);
         }
 
         try {
             $userDto = new UserDto(
                 name: $data['name'],
-                phoneNumber: $data['phone_number']
+                phoneNumber: $data['phone_number'],
+                password: $data['password'],
+                roles: $data['roles'] ?? ['ROLE_USER'],
             );
 
             $user = $this->userService->createUser($userDto);

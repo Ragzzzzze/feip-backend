@@ -20,24 +20,12 @@ class SummerHouseController extends AbstractController
     ) {
     }
 
-    #[Route('/api/houses', name: 'get_summer_houses', methods : ['GET'])]
+    #[Route('/api/houses', name: 'api_houses_get', methods : ['GET'])]
     public function getSummerHousesCont(): JsonResponse
     {
         try {
             $houses = $this->summerHouseService->getAllHouses();
-
-            $housesArray = array_map(function ($house) {
-                return [
-                    'id' => $house->getId(),
-                    'name' => $house->getHouseName(),
-                    'price' => $house->getPrice(),
-                    'sleeps' => $house->getSleeps(),
-                    'distance_to_sea' => $house->getDistanceToSea(),
-                    'hasTV' => $house->getHasTV(),
-                ];
-            }, $houses);
-
-            return new JsonResponse($housesArray);
+            return new JsonResponse($houses);
         } catch (Exception $e) {
             return new JsonResponse([
                 'error' => 'Failed to retrieve houses: ' . $e->getMessage(),
@@ -45,7 +33,7 @@ class SummerHouseController extends AbstractController
         }
     }
 
-    #[Route('/api/available-houses', name: 'get_available_houses', methods : ['GET'])]
+    #[Route('/api/available_houses', name: 'api_available_houses_get', methods : ['GET'])]
     public function getAvailableHousesCont(): JsonResponse
     {
         try {
@@ -58,7 +46,7 @@ class SummerHouseController extends AbstractController
                     'price' => $house->getPrice(),
                     'sleeps' => $house->getSleeps(),
                     'distance_to_sea' => $house->getDistanceToSea(),
-                    'hasTV' => $house->getHasTV(),
+                    'has_TV' => $house->getHasTV(),
                 ];
             }, $houses);
 

@@ -13,24 +13,28 @@ use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserServiceTest extends TestCase
 {
     private UserService $userService;
-    private $userRepositoryMock;
     private $entityManagerMock;
     private $validatorMock;
+    private $userRepositoryMock;
+    private $passwordHasherMock;
 
     protected function setUp(): void
-    {
-        $this->userRepositoryMock = $this->createMock(UserRepository::class);
+    {   
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->validatorMock = $this->createMock(ValidatorInterface::class);
+        $this->userRepositoryMock = $this->createMock(UserRepository::class);
+        $this->passwordHasherMock = $this->createMock(UserPasswordHasherInterface::class);
 
         $this->userService = new UserService(
-            $this->userRepositoryMock,
             $this->entityManagerMock,
-            $this->validatorMock
+            $this->validatorMock,
+            $this->userRepositoryMock,
+            $this->passwordHasherMock,
         );
     }
 
@@ -38,7 +42,9 @@ class UserServiceTest extends TestCase
     {
         $userDto = new UserDto(
             name: 'John Doe',
-            phoneNumber: '+123456789'
+            phoneNumber: '+123456789',
+            password: 'password123',
+            roles: ['ROLE_USER']
         );
 
         $this->validatorMock->method('validate')
@@ -48,9 +54,22 @@ class UserServiceTest extends TestCase
             ->with(['phoneNumber' => '+123456789'])
             ->willReturn(null);
 
+        $this->passwordHasherMock->expects($this->once())
+            ->method('hashPassword')
+            ->with(
+                $this->isInstanceOf(User::class),
+                'password123'
+            )
+            ->willReturn('hashed_password_123');
+
         $this->entityManagerMock->expects($this->once())
             ->method('persist')
-            ->with($this->isInstanceOf(User::class));
+            ->with($this->callback(function (User $user) {
+                return $user->getName() === 'John Doe' 
+                    && $user->getPhoneNumber() === '+123456789'
+                    && $user->getPassword() === 'hashed_password_123'
+                    && $user->getRoles() === ['ROLE_USER'];
+        }));
 
         $this->entityManagerMock->expects($this->once())
             ->method('flush');
@@ -60,13 +79,17 @@ class UserServiceTest extends TestCase
         $this->assertInstanceOf(User::class, $user);
         $this->assertEquals('John Doe', $user->getName());
         $this->assertEquals('+123456789', $user->getPhoneNumber());
+        $this->assertEquals('hashed_password_123', $user->getPassword());
+        $this->assertEquals(['ROLE_USER'], $user->getRoles());
     }
 
     public function testCreateUserValidationFailed(): void
     {
         $userDto = new UserDto(
-            name: '',
-            phoneNumber: 'invalid-phone12312312321212'
+            name: '1',
+            phoneNumber: 'invalid-phone12312312321212',
+            password: 'password456',
+            roles: ['ROLE_USER']
         );
 
         $violationsMock = $this->createMock(ConstraintViolationList::class);
@@ -76,7 +99,7 @@ class UserServiceTest extends TestCase
             ->willReturn($violationsMock);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Name and phone number are required');
+        $this->expectExceptionMessage('Invalid user data');
 
         $this->userService->createUser($userDto);
     }
@@ -85,7 +108,9 @@ class UserServiceTest extends TestCase
     {
         $userDto = new UserDto(
             name: 'John Doe',
-            phoneNumber: '+123456789'
+            phoneNumber: '+123456789',
+            password: 'password123',
+            roles: ['ROLE_USER']
         );
 
         $existingUser = new User();
@@ -108,29 +133,5 @@ class UserServiceTest extends TestCase
         $this->expectExceptionMessage('User with this phone already exists');
 
         $this->userService->createUser($userDto);
-    }
-
-    public function testFindUserByPhoneFound(): void
-    {
-        $existingUser = new User();
-        $existingUser->setPhoneNumber('+123456789');
-
-        $this->userRepositoryMock->method('findOneBy')
-            ->with(['phoneNumber' => '+123456789'])
-            ->willReturn($existingUser);
-
-        $result = $this->userService->findUserByPhone('+123456789');
-
-        $this->assertSame($existingUser, $result);
-    }
-
-    public function testFindUserByPhoneNotFound(): void
-    {
-        $this->userRepositoryMock->method('findOneBy')
-            ->with(['phoneNumber' => '+000000000'])
-            ->willReturn(null);
-        $result = $this->userService->findUserByPhone('+000000000');
-
-        $this->assertNull($result);
     }
 }

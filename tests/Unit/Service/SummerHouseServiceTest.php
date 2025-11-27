@@ -16,20 +16,20 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class SummerHouseServiceTest extends TestCase
 {
     private SummerHouseService $summerHouseService;
-    private $summerHouseRepositoryMock;
     private $entityManagerMock;
     private $validatorMock;
+    private $summerHouseRepositoryMock;
 
     protected function setUp(): void
     {
-        $this->summerHouseRepositoryMock = $this->createMock(SummerHouseRepository::class);
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->validatorMock = $this->createMock(ValidatorInterface::class);
+        $this->summerHouseRepositoryMock = $this->createMock(SummerHouseRepository::class);
 
         $this->summerHouseService = new SummerHouseService(
-            $this->summerHouseRepositoryMock,
             $this->entityManagerMock,
-            $this->validatorMock
+            $this->validatorMock,
+            $this->summerHouseRepositoryMock,
         );
     }
 
@@ -37,7 +37,7 @@ class SummerHouseServiceTest extends TestCase
     {
         $houseDto = new SummerHouseDto(
             name: 'Test Villa',
-            price: 150.0,
+            price: 150,
             sleeps: 4,
             distanceToSea: 100,
             hasTV: true
@@ -77,8 +77,8 @@ class SummerHouseServiceTest extends TestCase
         $result = $this->summerHouseService->getAllHouses();
 
         $this->assertCount(2, $result);
-        $this->assertEquals('House 1', $result[0]->getHouseName());
-        $this->assertEquals('House 2', $result[1]->getHouseName());
+        $this->assertEquals('House 1', $result[0]['name']);
+        $this->assertEquals('House 2', $result[1]['name']);
     }
 
     public function testGetAvailableHouses(): void

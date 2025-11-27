@@ -10,27 +10,42 @@ use App\Entity\User;
 use App\Enum\BookingStatus;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class BookingControllerTest extends WebTestCase
 {
     private $client;
     private EntityManagerInterface $entityManager;
+    private UserPasswordHasherInterface $passwordHasher;
+    private User $testUser;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        $this->passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Booking')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\SummerHouse')->execute();
+
+        $this->testUser = new User();
+        $this->testUser->setName('test');
+        $this->testUser->setPhoneNumber('+123456789');
+        $this->testUser->setPassword($this->passwordHasher->hashPassword($this->testUser, 'password123'));
+        $this->testUser->setRoles(['ROLE_USER']);
+
+        $this->entityManager->persist($this->testUser);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($this->testUser);
     }
 
     public function testCreateBookingSuccess(): void
     {
         $house = new SummerHouse();
         $house->setHouseName('Test Villa');
-        $house->setPrice(150.0);
+        $house->setPrice(150);
         $house->setSleeps(4);
         $house->setDistanceToSea(100);
         $house->setHasTV(true);
@@ -45,7 +60,7 @@ class BookingControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
-                'phoneNumber' => '+123456789',
+                'phoneNumber' => $this->testUser->getPhoneNumber(),
                 'houseId' => $house->getId(),
                 'comment' => 'Test booking comment',
             ])
@@ -90,7 +105,7 @@ class BookingControllerTest extends WebTestCase
             [],
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
-                'phoneNumber' => '+123456789',
+                'phoneNumber' => $this->testUser->getPhoneNumber(),
                 'houseId' => 999,
                 'comment' => 'Test comment',
             ])
@@ -100,34 +115,29 @@ class BookingControllerTest extends WebTestCase
         $this->assertEquals(400, $response->getStatusCode());
 
         $responseData = json_decode($response->getContent(), true);
-        $this->assertStringContainsString('House not found', $responseData['error']);
+        $this->assertStringContainsString('Summer house not found', $responseData['error']);
     }
 
     public function testGetUserBookingsSuccess(): void
     {
-        $user = new User();
-        $user->setName('Test User');
-        $user->setPhoneNumber('123456789');
-
         $house = new SummerHouse();
         $house->setHouseName('Test House');
-        $house->setPrice(100.0);
+        $house->setPrice(100);
         $house->setSleeps(4);
         $house->setDistanceToSea(50);
         $house->setHasTV(true);
 
         $booking = new Booking();
-        $booking->setUser($user);
+        $booking->setClient($this->testUser);
         $booking->setHouse($house);
         $booking->setStatus(BookingStatus::PENDING);
         $booking->setComment('Test booking');
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($this->testUser);
         $this->entityManager->persist($house);
-        $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/user/bookings?phone_number=123456789');
+        $this->client->request('GET', '/api/user/bookings?phone_number=' . $this->testUser->getPhoneNumber());
 
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -136,6 +146,8 @@ class BookingControllerTest extends WebTestCase
         $this->assertEquals('OK', $responseData['status']);
         $this->assertCount(1, $responseData['bookings']);
         $this->assertEquals('Test booking', $responseData['bookings'][0]['comment']);
+        $this->assertEquals('Test User', $responseData['bookings'][0]['guestName']);
+        $this->assertEquals('+123456789', $responseData['bookings'][0]['phoneNumber']);
     }
 
     public function testGetUserBookingsNoPhoneNumber(): void
@@ -151,24 +163,20 @@ class BookingControllerTest extends WebTestCase
 
     public function testUpdateBookingCommentSuccess(): void
     {
-        $user = new User();
-        $user->setName('Test User');
-        $user->setPhoneNumber('+123456789');
-
         $house = new SummerHouse();
         $house->setHouseName('Test House');
-        $house->setPrice(100.0);
+        $house->setPrice(100);
         $house->setSleeps(4);
         $house->setDistanceToSea(50);
         $house->setHasTV(true);
 
         $booking = new Booking();
-        $booking->setUser($user);
+        $booking->setClient($this->testUser);
         $booking->setHouse($house);
         $booking->setStatus(BookingStatus::PENDING);
         $booking->setComment('Old comment');
 
-        $this->entityManager->persist($user);
+        $this->entityManager->persist($this->testUser);
         $this->entityManager->persist($house);
         $this->entityManager->persist($booking);
         $this->entityManager->flush();

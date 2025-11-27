@@ -20,7 +20,7 @@ class BookingController extends AbstractController
     ) {
     }
 
-    #[Route('api/booking', name: 'app_booking_create', methods: ['POST'])]
+    #[Route('api/booking', name: 'api_booking_create', methods: ['POST'])]
     public function appBookingCreate(Request $request): JsonResponse
     {
         if (empty($request->toArray())) {
@@ -30,7 +30,7 @@ class BookingController extends AbstractController
         $data = $request->toArray();
 
         try {
-            if (!houseId) {
+            if (!isset($data['houseId'])) {
                 return $this->json(['error' => 'Missing field: houseId'], 400);
             }
             $bookingDto = new BookingDto(
@@ -57,7 +57,7 @@ class BookingController extends AbstractController
         }
     }
 
-    #[Route('api/booking', name: 'app_booking_change_commentary', methods: ['PATCH'])]
+    #[Route('api/booking', name: 'api_booking_change_commentary', methods: ['PATCH'])]
     public function appBookingChangeCommentary(Request $request): JsonResponse
     {
         if (empty($request->toArray())) {
@@ -89,7 +89,7 @@ class BookingController extends AbstractController
         }
     }
 
-    #[Route('/api/user/bookings', name: 'app_user_bookings', methods: ['GET'])]
+    #[Route('/api/user/bookings', name: 'api_user_bookings', methods: ['GET'])]
     public function getUserBookings(Request $request): JsonResponse
     {
         $phoneNumber = $request->query->get('phone_number', '');
@@ -106,8 +106,8 @@ class BookingController extends AbstractController
             $bookingsArray = array_map(function ($booking) {
                 return [
                     'id' => $booking->getId(),
-                    'guestName' => $booking->getUser()->getName(),
-                    'phoneNumber' => $booking->getUser()->getPhoneNumber(),
+                    'guestName' => $booking->getClient()->getName(),
+                    'phoneNumber' => $booking->getClient()->getPhoneNumber(),
                     'houseName' => $booking->getHouse()->getHouseName(),
                     'status' => $booking->getStatus(),
                     'comment' => $booking->getComment(),

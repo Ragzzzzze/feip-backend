@@ -22,26 +22,26 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class BookingServiceTest extends TestCase
 {
     private BookingService $bookingService;
-    private $bookingRepositoryMock;
-    private $userRepositoryMock;
-    private $houseRepositoryMock;
     private $entityManagerMock;
     private $validatorMock;
+    private $bookingRepositoryMock;
+    private $houseRepositoryMock;
+    private $userRepositoryMock;
 
     protected function setUp(): void
-    {
-        $this->bookingRepositoryMock = $this->createMock(BookingRepository::class);
-        $this->userRepositoryMock = $this->createMock(UserRepository::class);
-        $this->houseRepositoryMock = $this->createMock(SummerHouseRepository::class);
+    {   
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->validatorMock = $this->createMock(ValidatorInterface::class);
+        $this->bookingRepositoryMock = $this->createMock(BookingRepository::class);
+        $this->houseRepositoryMock = $this->createMock(SummerHouseRepository::class);
+        $this->userRepositoryMock = $this->createMock(UserRepository::class);
 
         $this->bookingService = new BookingService(
-            $this->bookingRepositoryMock,
-            $this->userRepositoryMock,
-            $this->houseRepositoryMock,
             $this->entityManagerMock,
-            $this->validatorMock
+            $this->validatorMock,
+            $this->bookingRepositoryMock,
+            $this->houseRepositoryMock,
+            $this->userRepositoryMock,
         );
     }
 
@@ -54,7 +54,7 @@ class BookingServiceTest extends TestCase
         );
 
         $house = new SummerHouse();
-        $house->setId(1);
+        $house->setHouseName('Test House');
 
         $user = new User();
         $user->setPhoneNumber('+123456789');
@@ -82,7 +82,7 @@ class BookingServiceTest extends TestCase
         $this->assertInstanceOf(Booking::class, $booking);
         $this->assertEquals(BookingStatus::PENDING, $booking->getStatus());
         $this->assertEquals('Test comment', $booking->getComment());
-        $this->assertEquals($user, $booking->getUser());
+        $this->assertEquals($user, $booking->getClient());
         $this->assertEquals($house, $booking->getHouse());
     }
 
@@ -98,7 +98,7 @@ class BookingServiceTest extends TestCase
             ->willReturn(null);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('House not found');
+        $this->expectExceptionMessage('Summer house not found');
 
         $this->bookingService->createBooking($bookingDto);
     }
@@ -135,7 +135,7 @@ class BookingServiceTest extends TestCase
         $user->setPhoneNumber('+123456789');
 
         $booking = new Booking();
-        $booking->setUser($user);
+        $booking->setClient($user);
 
         $this->userRepositoryMock->method('findOneBy')
             ->with(['phoneNumber' => '+123456789'])

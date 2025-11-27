@@ -5,36 +5,52 @@ declare(strict_types=1);
 namespace App\Tests\Integration\Controller;
 
 use App\Entity\SummerHouse;
+use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SummerHouseControllerTest extends WebTestCase
 {
     private $client;
     private EntityManagerInterface $entityManager;
+    private UserPasswordHasherInterface $passwordHasher;
+    private $testUser;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
         $this->entityManager = static::getContainer()->get('doctrine')->getManager();
+        $this->passwordHasher = static::getContainer()->get(UserPasswordHasherInterface::class);
 
         $this->entityManager->createQuery('DELETE FROM App\Entity\Booking')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\User')->execute();
         $this->entityManager->createQuery('DELETE FROM App\Entity\SummerHouse')->execute();
+
+        $this->testUser = new User();
+        $this->testUser->setName('Test User');
+        $this->testUser->setPhoneNumber('+123456789');
+        $this->testUser->setPassword($this->passwordHasher->hashPassword($this->testUser, 'password123'));
+        $this->testUser->setRoles(['ROLE_USER']);
+
+        $this->entityManager->persist($this->testUser);
+        $this->entityManager->flush();
+
+        $this->client->loginUser($this->testUser);
     }
 
     public function testGetAllHousesSuccess(): void
     {
         $house1 = new SummerHouse();
         $house1->setHouseName('Villa 1');
-        $house1->setPrice(100.0);
+        $house1->setPrice(100);
         $house1->setSleeps(4);
         $house1->setDistanceToSea(50);
         $house1->setHasTV(true);
 
         $house2 = new SummerHouse();
         $house2->setHouseName('Villa 2');
-        $house2->setPrice(150.0);
+        $house2->setPrice(150);
         $house2->setSleeps(6);
         $house2->setDistanceToSea(100);
         $house2->setHasTV(false);
@@ -58,7 +74,7 @@ class SummerHouseControllerTest extends WebTestCase
     {
         $house = new SummerHouse();
         $house->setHouseName('Available Villa');
-        $house->setPrice(120.0);
+        $house->setPrice(120);
         $house->setSleeps(4);
         $house->setDistanceToSea(75);
         $house->setHasTV(true);
@@ -66,7 +82,7 @@ class SummerHouseControllerTest extends WebTestCase
         $this->entityManager->persist($house);
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/available-houses');
+        $this->client->request('GET', '/api/available_houses');
 
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -86,7 +102,7 @@ class SummerHouseControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'name' => 'New Villa',
-                'price' => 200.0,
+                'price' => 200,
                 'sleeps' => 6,
                 'distanceToSea' => 150,
                 'hasTV' => true,

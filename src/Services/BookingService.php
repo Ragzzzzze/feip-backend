@@ -65,7 +65,7 @@ class BookingService
         }
 
         $booking = new Booking();
-        $booking->setUser($user);
+        $booking->setClient($user);
         $booking->setHouse($house);
         $booking->setComment($bookingDto->comment ?? '');
         $booking->setStatus(BookingStatus::PENDING);
