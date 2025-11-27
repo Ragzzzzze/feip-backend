@@ -1,0 +1,69 @@
+DOCKER_COMPOSE = docker-compose --env-file .env.local
+PHP = $(DOCKER_COMPOSE) exec php
+COMPOSE = $(PHP) composer
+
+#Docker
+build:
+	$(DOCKER_COMPOSE) build
+
+up:
+	$(DOCKER_COMPOSE) up -d
+
+down:
+	$(DOCKER_COMPOSE) down
+
+start:
+	$(DOCKER_COMPOSE) start
+
+stop:
+	$(DOCKER_COMPOSE) stop
+
+logs:
+	$(DOCKER_COMPOSE) logs -f
+
+
+#DataBase
+db-create:
+	$(PHP) bin/console doctrine:database:create
+
+db-make-migrate:
+	$(PHP) bin/console make:migration
+
+db-migrate:
+	$(PHP) bin/console doctrine:migrations:migrate
+
+db-schema:
+	$(PHP) bin/console --env=test doctrine:schema:create
+
+db-drop:
+	$(PHP) bin/console --env=test doctrine:database:drop --force
+
+db-status:
+	$(SYMFONY) doctrine:migrations:status
+
+#Composer
+install:
+	$(COMPOSER) install
+
+#Tests
+tests:
+	./vendor/bin/phpunit --testdox
+
+test-unit:
+	$(PHP) ./vendor/bin/phpunit --testsuite=unit
+
+#Code quality
+phpcs:
+	$(PHP) ./vendor/bin/phpcs
+
+phpcbf:
+	$(PHP) ./vendor/bin/phpcbf
+
+psalm:
+	$(PHP) ./vendor/bin/psalm
+
+
+
+
+
+
