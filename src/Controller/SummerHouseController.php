@@ -58,7 +58,7 @@ class SummerHouseController extends AbstractController
         }
     }
 
-    #[Route('/api/houses', name: 'create_house', methods: ['POST'])]
+    #[Route('/api/houses/create', name: 'create_house', methods: ['POST'])]
     public function createHouse(Request $request): JsonResponse
     {
         $data = $request->toArray();

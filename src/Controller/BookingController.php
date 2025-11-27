@@ -20,7 +20,7 @@ class BookingController extends AbstractController
     ) {
     }
 
-    #[Route('api/booking', name: 'api_booking_create', methods: ['POST'])]
+    #[Route('api/booking/create', name: 'api_booking_create', methods: ['POST'])]
     public function appBookingCreate(Request $request): JsonResponse
     {
         if (empty($request->toArray())) {
