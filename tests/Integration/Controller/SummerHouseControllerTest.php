@@ -27,14 +27,14 @@ class SummerHouseControllerTest extends WebTestCase
     {
         $house1 = new SummerHouse();
         $house1->setHouseName('Villa 1');
-        $house1->setPrice(100.0);
+        $house1->setPrice(100);
         $house1->setSleeps(4);
         $house1->setDistanceToSea(50);
         $house1->setHasTV(true);
 
         $house2 = new SummerHouse();
         $house2->setHouseName('Villa 2');
-        $house2->setPrice(150.0);
+        $house2->setPrice(150);
         $house2->setSleeps(6);
         $house2->setDistanceToSea(100);
         $house2->setHasTV(false);
@@ -46,6 +46,16 @@ class SummerHouseControllerTest extends WebTestCase
         $this->client->request('GET', '/api/houses');
 
         $response = $this->client->getResponse();
+
+        if (200 !== $response->getStatusCode()) {
+            echo 'HTTP Status: ' . $response->getStatusCode() . "\n";
+            echo 'Response Content: ' . $response->getContent() . "\n";
+
+            // Также проверьте логи
+            $container = static::getContainer();
+            $logger = $container->get('logger');
+            // или посмотрите var/log/test.log
+        }
         $this->assertEquals(200, $response->getStatusCode());
 
         $responseData = json_decode($response->getContent(), true);
@@ -58,7 +68,7 @@ class SummerHouseControllerTest extends WebTestCase
     {
         $house = new SummerHouse();
         $house->setHouseName('Available Villa');
-        $house->setPrice(120.0);
+        $house->setPrice(120);
         $house->setSleeps(4);
         $house->setDistanceToSea(75);
         $house->setHasTV(true);
@@ -86,7 +96,7 @@ class SummerHouseControllerTest extends WebTestCase
             ['CONTENT_TYPE' => 'application/json'],
             json_encode([
                 'name' => 'New Villa',
-                'price' => 200.0,
+                'price' => 200,
                 'sleeps' => 6,
                 'distanceToSea' => 150,
                 'hasTV' => true,

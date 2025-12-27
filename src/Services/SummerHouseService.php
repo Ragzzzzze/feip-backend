@@ -32,7 +32,7 @@ class SummerHouseService
                 'price' => $house->getPrice(),
                 'sleeps' => $house->getSleeps(),
                 'distance_to_sea' => $house->getDistanceToSea(),
-                'has_TV' => $house->getHasTV(),
+                'hasTV' => $house->getHasTV(),
             ];
         }
 

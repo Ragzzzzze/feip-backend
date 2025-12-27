@@ -30,7 +30,7 @@ class BookingControllerTest extends WebTestCase
     {
         $house = new SummerHouse();
         $house->setHouseName('Test Villa');
-        $house->setPrice(150.0);
+        $house->setPrice(150);
         $house->setSleeps(4);
         $house->setDistanceToSea(100);
         $house->setHasTV(true);
@@ -100,7 +100,7 @@ class BookingControllerTest extends WebTestCase
         $this->assertEquals(400, $response->getStatusCode());
 
         $responseData = json_decode($response->getContent(), true);
-        $this->assertStringContainsString('House not found', $responseData['error']);
+        $this->assertStringContainsString('Summer house not found', $responseData['error']);
     }
 
     public function testGetUserBookingsSuccess(): void
@@ -111,7 +111,7 @@ class BookingControllerTest extends WebTestCase
 
         $house = new SummerHouse();
         $house->setHouseName('Test House');
-        $house->setPrice(100.0);
+        $house->setPrice(100);
         $house->setSleeps(4);
         $house->setDistanceToSea(50);
         $house->setHasTV(true);
@@ -157,7 +157,7 @@ class BookingControllerTest extends WebTestCase
 
         $house = new SummerHouse();
         $house->setHouseName('Test House');
-        $house->setPrice(100.0);
+        $house->setPrice(100);
         $house->setSleeps(4);
         $house->setDistanceToSea(50);
         $house->setHasTV(true);
