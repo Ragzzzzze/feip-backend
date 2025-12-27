@@ -13,18 +13,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class SummerHouseService
 {
-    private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private SummerHouseRepository $summerHouseRepository;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        SummerHouseRepository $summerHouseRepository,
+        private SummerHouseRepository $summerHouseRepository,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
     ) {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->summerHouseRepository = $summerHouseRepository;
     }
 
     public function getAllHouses(): array

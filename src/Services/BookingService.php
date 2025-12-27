@@ -17,24 +17,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class BookingService
 {
-    private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private BookingRepository $bookingRepository;
-    private SummerHouseRepository $summerHouseRepository;
-    private UserRepository $userRepository;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        BookingRepository $bookingRepository,
-        SummerHouseRepository $summerHouseRepository,
-        UserRepository $userRepository,
+        private BookingRepository $bookingRepository,
+        private UserRepository $userRepository,
+        private SummerHouseRepository $summerHouseRepository,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
     ) {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->bookingRepository = $bookingRepository;
-        $this->summerHouseRepository = $summerHouseRepository;
-        $this->userRepository = $userRepository;
     }
 
     public function createBooking(BookingDto $bookingDto): Booking

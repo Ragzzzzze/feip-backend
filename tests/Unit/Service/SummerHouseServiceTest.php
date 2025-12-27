@@ -37,7 +37,7 @@ class SummerHouseServiceTest extends TestCase
     {
         $houseDto = new SummerHouseDto(
             name: 'Test Villa',
-            price: 150.0,
+            price: 150,
             sleeps: 4,
             distanceToSea: 100,
             hasTV: true
@@ -77,8 +77,8 @@ class SummerHouseServiceTest extends TestCase
         $result = $this->summerHouseService->getAllHouses();
 
         $this->assertCount(2, $result);
-        $this->assertEquals('House 1', $result[0]->getHouseName());
-        $this->assertEquals('House 2', $result[1]->getHouseName());
+        $this->assertEquals('House 1', $result[0]['name']);
+        $this->assertEquals('House 2', $result[1]['name']);
     }
 
     public function testGetAvailableHouses(): void

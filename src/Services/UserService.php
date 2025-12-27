@@ -13,18 +13,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserService
 {
-    private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private UserRepository $userRepository;
-
     public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        UserRepository $userRepository,
+        private UserRepository $userRepository,
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
     ) {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->userRepository = $userRepository;
     }
 
     public function createUser(UserDto $userDto): User
@@ -51,5 +44,10 @@ class UserService
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    public function findUserByPhone(string $phoneNumber): ?User
+    {
+        return $this->userRepository->findOneBy(['phoneNumber' => $phoneNumber]);
     }
 }

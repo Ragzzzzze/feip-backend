@@ -98,7 +98,7 @@ class BookingServiceTest extends TestCase
             ->willReturn(null);
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('House not found');
+        $this->expectExceptionMessage('Summer house not found');
 
         $this->bookingService->createBooking($bookingDto);
     }
