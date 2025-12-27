@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Controller;
+
+use App\Dto\UserDto;
+use App\Services\UserService;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
+
+class UserController extends AbstractController
+{
+    public function __construct(
+        private UserService $userService
+    ) {}
+
+    #[Route('/api/users/', name: 'create_user', methods: ['POST'])]
+    public function create_user(Request $request): JsonResponse
+    {
+        $data = $request->toArray();
+
+        if (empty($data)) {
+            return new JsonResponse(["error" => "Request body is empty"], 422);
+        }
+        
+        if (!isset($data['name']) || !isset($data['phone_number'])) {
+            return new JsonResponse([
+                "error" => "Missing required fields: name and phone_number are required"
+            ], 400);
+        }
+
+        try {
+            $userDto = new UserDto(
+                name: $data['name'],
+                phoneNumber: $data['phone_number']
+            );
+            
+            $user = $this->userService->createUser($userDto);
+            
+            return new JsonResponse([
+                "status" => "OK",
+                "message" => "User created successfully",
+                "user_id" => $user->getId()
+            ], 201);
+            
+        } catch (\InvalidArgumentException $e) {
+            return new JsonResponse([
+                "error" => $e->getMessage()
+            ], 400);
+
+        } catch (\Exception $e) {
+            
+            return new JsonResponse([
+                "error" => "Failed to create user: " . $e->getMessage()
+            ], 500);
+        }
+    }
+}
