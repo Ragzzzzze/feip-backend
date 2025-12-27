@@ -13,9 +13,5 @@ class UserDto
     {
         $this->name = $name;
         $this->phoneNumber = $phoneNumber;
-
-        error_log("UserDto constructor called with: name='{$name}', phoneNumber='{$phoneNumber}'");
-
-        error_log("UserDto properties set: name='{$this->name}', phoneNumber='{$this->phoneNumber}'");
     }
 }

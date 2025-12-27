@@ -30,12 +30,16 @@ class BookingController extends AbstractController
         $data = $request->toArray();
 
         try {
-            if (!houseId) {
-                return $this->json(['error' => 'Missing field: houseId'], 400);
+            $phoneNumber = $data['phoneNumber'] ?? '';
+            $houseId = isset($data['houseId']) ? (int) $data['houseId'] : null;
+
+            if (!$phoneNumber || !$houseId) {
+                return $this->json(['error' => 'Missing required fields'], 400);
             }
+
             $bookingDto = new BookingDto(
-                phoneNumber: $data['phoneNumber'] ?? '',
-                houseId: (int) $data['houseId'],
+                phoneNumber: $phoneNumber,
+                houseId: $houseId,
                 comment: $data['comment'] ?? null
             );
 
@@ -67,6 +71,10 @@ class BookingController extends AbstractController
         $data = $request->toArray();
 
         try {
+            if (!isset($data['id'])) {
+                return new JsonResponse(['error' => 'Missing required field: id'], 400);
+            }
+
             $result = $this->bookingService->updateBookingComment(
                 (int) $data['id'],
                 $data['comment'] ?? ''
@@ -93,6 +101,8 @@ class BookingController extends AbstractController
     public function getUserBookings(Request $request): JsonResponse
     {
         $phoneNumber = $request->query->get('phone_number', '');
+
+        $phoneNumber = (string) $phoneNumber;
 
         if (!$phoneNumber) {
             return new JsonResponse([

@@ -23,8 +23,9 @@ class SummerHouseRepository extends ServiceEntityRepository
         array $activeStatus = [BookingStatus::PENDING, BookingStatus::CONFIRMED, BookingStatus::CANCELLED],
     ): array {
         $subQuery = $this->getEntityManager()->createQueryBuilder()
-        ->select('IDENTITY(b.house)')
+        ->select('house.id')
         ->from('App\Entity\Booking', 'b')
+        ->join('b.house', 'house')
         ->where('b.status IN (:activeStatuses)');
 
         $qb = $this->createQueryBuilder('h');
