@@ -29,7 +29,7 @@ class BookingServiceTest extends TestCase
     private $userRepositoryMock;
 
     protected function setUp(): void
-    {   
+    {
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->validatorMock = $this->createMock(ValidatorInterface::class);
         $this->bookingRepositoryMock = $this->createMock(BookingRepository::class);

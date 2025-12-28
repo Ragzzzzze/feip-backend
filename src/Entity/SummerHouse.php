@@ -61,6 +61,13 @@ class SummerHouse
         return $this->hasTV;
     }
 
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     public function setHouseName(string $houseName): static
     {
         $this->houseName = $houseName;

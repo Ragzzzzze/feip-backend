@@ -25,6 +25,7 @@ class SummerHouseController extends AbstractController
     {
         try {
             $houses = $this->summerHouseService->getAllHouses();
+
             return new JsonResponse($houses);
         } catch (Exception $e) {
             return new JsonResponse([
@@ -39,18 +40,7 @@ class SummerHouseController extends AbstractController
         try {
             $houses = $this->summerHouseService->getAvailableHouses();
 
-            $housesArray = array_map(function ($house) {
-                return [
-                    'id' => $house->getId(),
-                    'name' => $house->getHouseName(),
-                    'price' => $house->getPrice(),
-                    'sleeps' => $house->getSleeps(),
-                    'distance_to_sea' => $house->getDistanceToSea(),
-                    'has_TV' => $house->getHasTV(),
-                ];
-            }, $houses);
-
-            return new JsonResponse($housesArray);
+            return new JsonResponse($houses);
         } catch (Exception $e) {
             return new JsonResponse([
                 'error' => 'Failed to retrieve available houses: ' . $e->getMessage(),

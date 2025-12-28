@@ -10,10 +10,8 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class AuthController extends AbstractController
@@ -29,9 +27,18 @@ class AuthController extends AbstractController
     {
         $data = $request->toArray();
 
-        if (!isset($data['name']) || !isset($data['phone_number']) || !isset($data['password']) || !isset($data['roles'])) {
+        if (
+            !isset($data['phone_number'])
+            || !isset($data['password'])
+        ) {
             return new JsonResponse([
                 'error' => 'Phone number and password are required',
+            ], 400);
+        }
+
+        if (!isset($data['name'])) {
+            return new JsonResponse([
+                'error' => 'Name is required',
             ], 400);
         }
 

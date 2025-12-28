@@ -9,8 +9,8 @@ use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserService
 {
@@ -33,7 +33,12 @@ class UserService
 
     public function createUser(UserDto $userDto): User
     {
-        if (empty($userDto->name) || empty($userDto->phoneNumber) || empty($userDto->password) || empty($userDto->roles)) {
+        if (
+            empty($userDto->name)
+            || empty($userDto->phoneNumber)
+            || empty($userDto->password)
+            || empty($userDto->roles)
+        ) {
             throw new InvalidArgumentException('Fields are required');
         }
 

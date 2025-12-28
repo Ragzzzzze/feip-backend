@@ -34,7 +34,7 @@ class UserControllerTest extends WebTestCase
                 'name' => 'John Doe',
                 'phone_number' => '123456789',
                 'password' => 'password123',
-                'roles' => ['ROLE_USER']
+                'roles' => ['ROLE_USER'],
             ])
         );
 

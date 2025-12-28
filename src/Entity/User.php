@@ -7,6 +7,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Override;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -54,7 +55,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->bookings;
     }
 
-    public function getRoles(): array 
+    #[Override]
+    public function getRoles(): array
     {
         $roles = $this->roles;
         if (empty($this->roles)) {
@@ -64,7 +66,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function getPassword() : ?string
+    #[Override]
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -83,23 +86,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function setRoles(array $roles) : static
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
         return $this;
     }
 
-    public function setPassword(?string $password) : static
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
 
         return $this;
     }
 
+    #[Override]
     public function eraseCredentials(): void
     {
-        return;
     }
 
     public function getSalt(): ?string
@@ -107,8 +110,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    #[Override]
     public function getUserIdentifier(): string
     {
-        return (string) $this->phoneNumber;
+        /** @var non-empty-string $phoneNumber */
+        $phoneNumber = $this->phoneNumber;
+
+        return $phoneNumber;
     }
 }
