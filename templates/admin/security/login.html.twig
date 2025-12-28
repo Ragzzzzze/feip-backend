@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Login{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Admin Login</h4>
+                </div>
+                <div class="card-body">
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    {# Измените action на пустую строку или текущий URL #}
+                    <form method="post">
+                        {% if csrf_token('authenticate') %}
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                        {% endif %}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Phone Number</label>
+                            <input type="text" value="{{ last_username }}" name="_username" id="username" class="form-control" required autofocus>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" name="_password" id="password" class="form-control" required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Login</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
