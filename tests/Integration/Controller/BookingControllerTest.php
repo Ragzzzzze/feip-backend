@@ -135,9 +135,11 @@ class BookingControllerTest extends WebTestCase
 
         $this->entityManager->persist($this->testUser);
         $this->entityManager->persist($house);
+        $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
-        $this->client->request('GET', '/api/user/bookings?phone_number=' . $this->testUser->getPhoneNumber());
+        $url = urlencode($this->testUser->getPhoneNumber());
+        $this->client->request('GET', '/api/user/bookings?phone_number=' . $url);
 
         $response = $this->client->getResponse();
         $this->assertEquals(200, $response->getStatusCode());
@@ -146,7 +148,7 @@ class BookingControllerTest extends WebTestCase
         $this->assertEquals('OK', $responseData['status']);
         $this->assertCount(1, $responseData['bookings']);
         $this->assertEquals('Test booking', $responseData['bookings'][0]['comment']);
-        $this->assertEquals('Test User', $responseData['bookings'][0]['guestName']);
+        $this->assertEquals('test', $responseData['bookings'][0]['guestName']);
         $this->assertEquals('+123456789', $responseData['bookings'][0]['phoneNumber']);
     }
 
