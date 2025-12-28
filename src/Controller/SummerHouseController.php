@@ -25,7 +25,7 @@ class SummerHouseController extends AbstractController
     {
         try {
             $houses = $this->summerHouseService->getAllHouses();
-            
+
             return new JsonResponse($houses);
         } catch (Exception $e) {
             return new JsonResponse([

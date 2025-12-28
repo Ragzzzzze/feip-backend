@@ -39,7 +39,7 @@ security:
         - { path: ^/api/auth/login, roles: PUBLIC_ACCESS }
         - { path: ^/api/auth/logout, roles: PUBLIC_ACCESS }
         
-        - { path: ^/api/users, methods: [POST], roles: PUBLIC_ACCESS }
+        - { path: ^/api/users/create, methods: [POST], roles: PUBLIC_ACCESS }
 
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 

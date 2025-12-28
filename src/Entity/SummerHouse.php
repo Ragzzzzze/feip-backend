@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\SummerHouseRepository;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
-use App\Controller\BookingController;
+use App\Controller\SummerHouseController;
+use App\Repository\SummerHouseRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SummerHouseRepository::class)]
 #[ORM\Table(name: 'houses')]
@@ -17,17 +17,17 @@ use App\Controller\BookingController;
     operations: [
         new GetCollection(
             uriTemplate: '/houses',
-            controller: HouseController::class . '::getSummerHousesCont',
+            controller: SummerHouseController::class . '::getSummerHousesCont',
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new GetCollection(
-            uriTemplate: '/houses/available_houses',
-            controller: HouseController::class . '::getAvailableHousesCont',
+            uriTemplate: '/available_houses',
+            controller: SummerHouseController::class . '::getAvailableHousesCont',
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new Post(
             uriTemplate: '/houses/create',
-            controller: HouseController::class . '::createHouse',
+            controller: SummerHouseController::class . '::createHouse',
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
     ]

@@ -55,7 +55,7 @@ class BookingControllerTest extends WebTestCase
 
         $this->client->request(
             'POST',
-            '/api/booking',
+            '/api/booking/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -82,7 +82,7 @@ class BookingControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/booking',
+            '/api/booking/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -100,7 +100,7 @@ class BookingControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/booking',
+            '/api/booking/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -135,6 +135,7 @@ class BookingControllerTest extends WebTestCase
 
         $this->entityManager->persist($this->testUser);
         $this->entityManager->persist($house);
+        $this->entityManager->persist($booking);
         $this->entityManager->flush();
 
         $url = urlencode($this->testUser->getPhoneNumber());

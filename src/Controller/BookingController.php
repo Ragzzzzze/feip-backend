@@ -38,8 +38,8 @@ class BookingController extends AbstractController
             }
 
             $bookingDto = new BookingDto(
-                phoneNumber: $data['phoneNumber'] ?? '',
-                houseId: (int) $data['houseId'],
+                phoneNumber: $phoneNumber,
+                houseId: $houseId,
                 comment: $data['comment'] ?? null
             );
 
