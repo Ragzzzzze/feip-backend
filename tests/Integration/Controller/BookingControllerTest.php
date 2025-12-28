@@ -100,7 +100,7 @@ class BookingControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/booking',
+            '/api/booking/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

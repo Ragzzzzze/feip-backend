@@ -33,6 +33,7 @@ security:
                 enable_csrf: true
             logout:
                 path: admin_logout
+                target: admin_login
         main:
             lazy: true
             provider: app_user_provider

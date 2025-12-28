@@ -16,14 +16,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
+use Override;
 
+/**
+ * @extends AbstractCrudController<Booking>
+ */
 class BookingCrudController extends AbstractCrudController
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return Booking::class;
     }
 
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -38,6 +44,7 @@ class BookingCrudController extends AbstractCrudController
             ]);
     }
 
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
@@ -52,6 +59,7 @@ class BookingCrudController extends AbstractCrudController
             ]));
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel('Booking Information');

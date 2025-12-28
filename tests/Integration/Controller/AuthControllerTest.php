@@ -32,8 +32,6 @@ class AuthControllerTest extends WebTestCase
 
         $this->entityManager->persist($this->testUser);
         $this->entityManager->flush();
-
-        $this->client->loginUser($this->testUser);
     }
 
     public function testLoginSuccess(): void
@@ -198,8 +196,6 @@ class AuthControllerTest extends WebTestCase
 
     public function testProfileUnauthenticated(): void
     {
-        $this->client->restart();
-
         $this->client->request('GET', '/api/auth/profile');
 
         $response = $this->client->getResponse();

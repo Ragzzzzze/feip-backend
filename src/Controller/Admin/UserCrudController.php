@@ -12,14 +12,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Override;
 
+/**
+ * @extends AbstractCrudController<User>
+ */
 class UserCrudController extends AbstractCrudController
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return User::class;
     }
 
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -34,6 +40,7 @@ class UserCrudController extends AbstractCrudController
             ]);
     }
 
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
@@ -41,6 +48,7 @@ class UserCrudController extends AbstractCrudController
         ->add('phoneNumber');
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel('Personal Information');

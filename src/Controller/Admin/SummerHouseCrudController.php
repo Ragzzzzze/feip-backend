@@ -16,14 +16,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
+use Override;
 
+/**
+ * @extends AbstractCrudController<SummerHouse>
+ */
 class SummerHouseCrudController extends AbstractCrudController
 {
+    #[Override]
     public static function getEntityFqcn(): string
     {
         return SummerHouse::class;
     }
 
+    #[Override]
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -38,6 +44,7 @@ class SummerHouseCrudController extends AbstractCrudController
             ]);
     }
 
+    #[Override]
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
@@ -48,6 +55,7 @@ class SummerHouseCrudController extends AbstractCrudController
             ->add(BooleanFilter::new('hasTV', 'Has TV'));
     }
 
+    #[Override]
     public function configureFields(string $pageName): iterable
     {
         yield FormField::addPanel('SummerHouse Information');

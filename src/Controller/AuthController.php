@@ -67,6 +67,15 @@ class AuthController extends AbstractController
         return $response ?? new JsonResponse(['error' => 'Unknown error'], 500);
     }
 
+    #[Route('/api/auth/logout', name: 'api_auth_logout', methods: ['POST'])]
+    public function logout(): JsonResponse
+    {
+        return new JsonResponse([
+            'status' => 'OK',
+            'message' => 'Logout successful',
+        ], 200);
+    }
+
     #[Route('/api/auth/profile', name: 'api_auth_profile', methods: ['GET'])]
     public function profile(#[CurrentUser] ?User $user): JsonResponse
     {
