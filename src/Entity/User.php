@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use Override;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -66,6 +67,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->bookings;
     }
 
+    #[Override]
     public function getRoles(): array 
     {
         $roles = $this->roles;
@@ -76,7 +78,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function getPassword() : ?string
+    #[Override]
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -109,9 +112,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    #[Override]
     public function eraseCredentials(): void
     {
-        return;
     }
 
     public function getSalt(): ?string
@@ -119,8 +122,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    #[Override]
     public function getUserIdentifier(): string
     {
-        return (string) $this->phoneNumber;
+        /** @var non-empty-string $phoneNumber */
+        $phoneNumber = $this->phoneNumber;
+
+        return $phoneNumber;
     }
 }

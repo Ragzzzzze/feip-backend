@@ -33,7 +33,12 @@ class UserService
 
     public function createUser(UserDto $userDto): User
     {
-        if (empty($userDto->name) || empty($userDto->phoneNumber) || empty($userDto->password) || empty($userDto->roles)) {
+        if (
+            empty($userDto->name)
+            || empty($userDto->phoneNumber)
+            || empty($userDto->password)
+            || empty($userDto->roles)
+        ) {
             throw new InvalidArgumentException('Fields are required');
         }
 

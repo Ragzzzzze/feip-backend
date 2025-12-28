@@ -48,7 +48,6 @@ class SummerHouseService
 
     public function getHouse(int $houseId): ?SummerHouse
     {
-        /** @var SummerHouse|null $result */
         $result = $this->summerHouseRepository->find($houseId);
         if (null === $result) {
             return null;

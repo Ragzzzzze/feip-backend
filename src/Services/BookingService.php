@@ -43,19 +43,14 @@ class BookingService
         if (count($errors) > 0) {
             throw new InvalidArgumentException('Invalid booking data');
         }
-        /** @var SummerHouse|null $house */
+
         $house = $this->summerHouseRepository->find($bookingDto->houseId);
 
         if (null === $house) {
             throw new InvalidArgumentException('Summer house not found');
         }
 
-        /** @var User|null $user */
         $user = $this->userRepository->findOneBy(['phoneNumber' => $bookingDto->phoneNumber]);
-
-        if (null === $user) {
-            throw new InvalidArgumentException('User not found');
-        }
 
         if (null === $user) {
             $user = new User();

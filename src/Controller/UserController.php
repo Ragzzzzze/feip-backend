@@ -31,7 +31,12 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => 'Request body is empty'], 422);
         }
 
-        if (!isset($data['name']) || !isset($data['phone_number']) || !isset($data['password']) || !isset($data['roles'])) {
+        if (
+            !isset($data['name'])
+            || !isset($data['phone_number'])
+            || !isset($data['password'])
+            || !isset($data['roles'])
+        ) {
             return new JsonResponse([
                 'error' => 'Missing required fields',
             ], 400);

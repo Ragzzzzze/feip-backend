@@ -57,7 +57,7 @@ class SummerHouseServiceTest extends TestCase
 
         $this->assertInstanceOf(SummerHouse::class, $house);
         $this->assertEquals('Test Villa', $house->getHouseName());
-        $this->assertEquals(150.0, $house->getPrice());
+        $this->assertEquals(150, $house->getPrice());
         $this->assertEquals(4, $house->getSleeps());
         $this->assertEquals(100, $house->getDistanceToSea());
         $this->assertEquals('Pool, WiFi', $house->getHasTV());
