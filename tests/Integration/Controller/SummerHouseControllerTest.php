@@ -126,7 +126,7 @@ class SummerHouseControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/houses',
+            '/api/houses/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

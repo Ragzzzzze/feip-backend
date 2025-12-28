@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller;
 
+use LogicException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class AdminSecurityController extends AbstractController
 {
@@ -31,6 +32,6 @@ class AdminSecurityController extends AbstractController
     #[Route('/admin/logout', name: 'admin_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method will be intercepted by the logout key on your firewall.');
+        throw new LogicException('This method will be intercepted by the logout key on your firewall.');
     }
 }

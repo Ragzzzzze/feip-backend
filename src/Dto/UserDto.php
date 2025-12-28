@@ -17,9 +17,5 @@ class UserDto
         $this->phoneNumber = $phoneNumber;
         $this->password = $password;
         $this->roles = $roles;
-
-        error_log("UserDto constructor called with: name='{$name}', phoneNumber='{$phoneNumber}', password='{$password}', roles=" . json_encode($roles));
-
-        error_log("UserDto properties set: name='{$this->name}', phoneNumber='{$this->phoneNumber}', password='{$this->password}', roles=" . json_encode($this->roles));
     }
 }

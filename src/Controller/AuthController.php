@@ -10,10 +10,8 @@ use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\CurrentUser;
 
 class AuthController extends AbstractController
@@ -28,34 +26,54 @@ class AuthController extends AbstractController
     public function login(Request $request): JsonResponse
     {
         $data = $request->toArray();
+        $response = null;
 
-        if (!isset($data['name']) || !isset($data['phone_number']) || !isset($data['password']) || !isset($data['roles'])) {
-            return new JsonResponse([
+        $phoneNumber = $data['phone_number'] ?? null;
+        $password = $data['password'] ?? null;
+
+        if (null === $phoneNumber || null === $password || !isset($password) || !isset($phoneNumber)) {
+            $response = new JsonResponse([
                 'error' => 'Phone number and password are required',
             ], 400);
         }
 
-        $phoneNumber = $data['phone_number'];
-        $password = $data['password'];
+        if (null === $response && null !== $phoneNumber && null !== $password) {
+            $user = $this->userRepository->findOneBy(['phoneNumber' => $phoneNumber]);
 
-        $user = $this->userRepository->findOneBy(['phoneNumber' => $phoneNumber]);
-
-        if (!$user) {
-            return new JsonResponse([
-                'error' => 'Invalid credentials',
-            ], 400);
+            if (!$user || !$this->passwordHasher->isPasswordValid($user, $password)) {
+                $response = new JsonResponse([
+                    'error' => 'Invalid credentials',
+                ], 401);
+            } else {
+                try {
+                    $response = new JsonResponse([
+                        'status' => 'OK',
+                        'message' => 'Login successful',
+                        'user' => [
+                            'id' => $user->getId(),
+                            'name' => $user->getName(),
+                            'phone_number' => $user->getPhoneNumber(),
+                            'roles' => $user->getRoles(),
+                        ],
+                    ], 200);
+                } catch (Exception $e) {
+                    $response = new JsonResponse([
+                        'error' => 'Login failed: ' . $e->getMessage(),
+                    ], 400);
+                }
+            }
         }
 
-        if (!$this->passwordHasher->isPasswordValid($user, $password)) {
-            return new JsonResponse([
-                'error' => 'Invalid credentials',
-            ], 401);
-        }
+        return $response ?? new JsonResponse(['error' => 'Unknown error'], 500);
+    }
 
-        try {
-            return new JsonResponse([
-                'status' => 'OK',
-                'message' => 'Login successful',
+    #[Route('/api/auth/profile', name: 'api_auth_profile', methods: ['GET'])]
+    public function profile(#[CurrentUser] ?User $user): JsonResponse
+    {
+        $_response = null;
+
+        if ($user) {
+            $_response = new JsonResponse([
                 'user' => [
                     'id' => $user->getId(),
                     'name' => $user->getName(),
@@ -63,38 +81,12 @@ class AuthController extends AbstractController
                     'roles' => $user->getRoles(),
                 ],
             ], 200);
-        } catch (Exception $e) {
-            return new JsonResponse([
-                'error' => 'Login failed: ' . $e->getMessage(),
-            ], 400);
-        }
-    }
-
-    #[Route('/api/auth/logout', name: 'api_auth_logout', methods: ['POST'])]
-    public function logout(): JsonResponse
-    {
-        return new JsonResponse([
-            'status' => 'OK',
-            'message' => 'Logout successful',
-        ], 200);
-    }
-
-    #[Route('/api/auth/profile', name: 'api_auth_profile', methods: ['GET'])]
-    public function profile(#[CurrentUser] ?User $user): JsonResponse
-    {
-        if (!$user) {
-            return new JsonResponse([
+        } else {
+            $_response = new JsonResponse([
                 'error' => 'Not authenticated',
             ], 401);
         }
 
-        return new JsonResponse([
-            'user' => [
-                'id' => $user->getId(),
-                'name' => $user->getName(),
-                'phone_number' => $user->getPhoneNumber(),
-                'roles' => $user->getRoles(),
-            ],
-        ], 200);
+        return $_response;
     }
 }

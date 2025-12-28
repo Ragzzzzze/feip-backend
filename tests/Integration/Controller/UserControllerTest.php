@@ -26,7 +26,7 @@ class UserControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/users/',
+            '/api/users/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -34,7 +34,7 @@ class UserControllerTest extends WebTestCase
                 'name' => 'John Doe',
                 'phone_number' => '123456789',
                 'password' => 'password123',
-                'roles' => ['ROLE_USER']
+                'roles' => ['ROLE_USER'],
             ])
         );
 
@@ -51,7 +51,7 @@ class UserControllerTest extends WebTestCase
     {
         $this->client->request(
             'POST',
-            '/api/users/',
+            '/api/users/create',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

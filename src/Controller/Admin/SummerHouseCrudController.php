@@ -1,20 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\SummerHouse;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\NumericFilter;
 
 class SummerHouseCrudController extends AbstractCrudController
 {
@@ -33,7 +34,7 @@ class SummerHouseCrudController extends AbstractCrudController
             ->setPaginatorPageSize(20)
             ->showEntityActionsInlined()
             ->setFormOptions([
-                'validation_groups' => ['Default', 'admin']
+                'validation_groups' => ['Default', 'admin'],
             ]);
     }
 
@@ -55,23 +56,22 @@ class SummerHouseCrudController extends AbstractCrudController
 
         yield TextField::new('houseName', 'House Name')
             ->setRequired(true);
-            
+
         yield FormField::addPanel('Pricing & Capacity');
 
         yield MoneyField::new('price', 'Price per night')
             ->setCurrency('RUB')
             ->setStoredAsCents(false)
-            ->setRequired(true);   
+            ->setRequired(true);
 
         yield IntegerField::new('sleeps', 'Sleeps (Capacity)')
             ->setRequired(true);
-            
 
         yield FormField::addPanel('Details & Amenities');
-        
+
         yield IntegerField::new('distanceToSea', 'Distance to Sea (meters)')
             ->setRequired(true);
-            
+
         yield BooleanField::new('hasTV', 'Has TV')
             ->setRequired(true);
     }

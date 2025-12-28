@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Post;
+use App\Controller\UserController;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\Post;
-use App\Controller\UserController;
+use Override;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -17,8 +19,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Table(name: 'users')]
 #[ApiResource(
     operations: [
+        new Get(
+            uriTemplate: '/users/{id}',
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+        ),
         new Post(
-            uriTemplate: '/users',
+            uriTemplate: '/users/create',
             controller: UserController::class . '::createUser',
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
@@ -66,7 +72,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->bookings;
     }
 
-    public function getRoles(): array 
+    #[Override]
+    public function getRoles(): array
     {
         $roles = $this->roles;
         if (empty($this->roles)) {
@@ -76,7 +83,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function getPassword() : ?string
+    #[Override]
+    public function getPassword(): ?string
     {
         return $this->password;
     }
@@ -95,23 +103,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function setRoles(array $roles) : static
+    public function setRoles(array $roles): static
     {
         $this->roles = $roles;
 
         return $this;
     }
 
-    public function setPassword(?string $password) : static
+    public function setPassword(?string $password): static
     {
         $this->password = $password;
 
         return $this;
     }
 
+    #[Override]
     public function eraseCredentials(): void
     {
-        return;
     }
 
     public function getSalt(): ?string
@@ -119,8 +127,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return null;
     }
 
+    #[Override]
     public function getUserIdentifier(): string
     {
-        return (string) $this->phoneNumber;
+        /** @var non-empty-string $phoneNumber */
+        $phoneNumber = $this->phoneNumber;
+
+        return $phoneNumber;
     }
 }

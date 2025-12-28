@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Repository\SummerHouseRepository;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\SummerHouseController;
+use App\Repository\SummerHouseRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SummerHouseRepository::class)]
 #[ORM\Table(name: 'houses')]
@@ -21,7 +21,7 @@ use App\Controller\SummerHouseController;
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
         new GetCollection(
-            uriTemplate: '/houses/available_houses',
+            uriTemplate: '/available_houses',
             controller: SummerHouseController::class . '::getAvailableHousesCont',
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
@@ -82,6 +82,13 @@ class SummerHouse
     public function getHasTV(): bool
     {
         return $this->hasTV;
+    }
+
+    public function setId(int $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function setHouseName(string $houseName): static

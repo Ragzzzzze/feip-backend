@@ -1,21 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\Booking;
 use App\Enum\BookingStatus;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 
 class BookingCrudController extends AbstractCrudController
 {
@@ -34,7 +34,7 @@ class BookingCrudController extends AbstractCrudController
             ->setPaginatorPageSize(20)
             ->showEntityActionsInlined()
             ->setFormOptions([
-                'validation_groups' => ['Default', 'admin']
+                'validation_groups' => ['Default', 'admin'],
             ]);
     }
 
@@ -61,7 +61,7 @@ class BookingCrudController extends AbstractCrudController
         yield AssociationField::new('house', 'Summer House')
             ->setRequired(true)
             ->setFormTypeOption('choice_label', 'houseName');
-        
+
         yield ChoiceField::new('status', 'Status')
             ->setChoices([
                 'Pending' => BookingStatus::PENDING,
@@ -73,7 +73,7 @@ class BookingCrudController extends AbstractCrudController
                 BookingStatus::CONFIRMED->value => 'success',
                 BookingStatus::CANCELLED->value => 'danger',
             ]);
-        
+
         yield TextareaField::new('comment', 'Comment');
     }
 }

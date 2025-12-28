@@ -198,13 +198,12 @@ class AuthControllerTest extends WebTestCase
 
     public function testProfileUnauthenticated(): void
     {
+        $this->client->restart();
+
         $this->client->request('GET', '/api/auth/profile');
 
         $response = $this->client->getResponse();
-        $this->assertEquals(500, $response->getStatusCode());
-
-        $responseData = json_decode($response->getContent(), true);
-        $this->assertEquals('Not authenticated', $responseData['error']);
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     public function testLoginEmptyRequest(): void

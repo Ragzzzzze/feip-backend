@@ -1,13 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controller\Admin;
 
 use App\Entity\Booking;
 use App\Entity\SummerHouse;
 use App\Entity\User;
-use App\Controller\Admin\BookingCrudController;
-use App\Controller\Admin\SummerHouseCrudController;
-use App\Controller\Admin\UserCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
@@ -20,7 +19,6 @@ class DashboardController extends AbstractDashboardController
     public function index(): Response
     {
         return $this->render('@EasyAdmin/page/content.html.twig');
-
     }
 
     public function configureDashboard(): Dashboard
@@ -40,10 +38,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Bookings', 'fa fa-calendar-check', Booking::class)
             ->setController(BookingCrudController::class);
 
-            yield MenuItem::section('Summer Houses');
+        yield MenuItem::section('Summer Houses');
         yield MenuItem::linkToCrud('Houses', 'fa fa-home', SummerHouse::class)
             ->setController(SummerHouseCrudController::class);
-        
+
         yield MenuItem::section('Users');
         yield MenuItem::linkToCrud('Users', 'fa fa-users', User::class)
             ->setController(UserCrudController::class);

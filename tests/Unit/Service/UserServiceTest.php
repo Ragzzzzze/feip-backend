@@ -11,9 +11,9 @@ use App\Services\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserServiceTest extends TestCase
 {
@@ -24,7 +24,7 @@ class UserServiceTest extends TestCase
     private $passwordHasherMock;
 
     protected function setUp(): void
-    {   
+    {
         $this->entityManagerMock = $this->createMock(EntityManagerInterface::class);
         $this->validatorMock = $this->createMock(ValidatorInterface::class);
         $this->userRepositoryMock = $this->createMock(UserRepository::class);
@@ -65,11 +65,11 @@ class UserServiceTest extends TestCase
         $this->entityManagerMock->expects($this->once())
             ->method('persist')
             ->with($this->callback(function (User $user) {
-                return $user->getName() === 'John Doe' 
-                    && $user->getPhoneNumber() === '+123456789'
-                    && $user->getPassword() === 'hashed_password_123'
+                return 'John Doe' === $user->getName()
+                    && '+123456789' === $user->getPhoneNumber()
+                    && 'hashed_password_123' === $user->getPassword()
                     && $user->getRoles() === ['ROLE_USER'];
-        }));
+            }));
 
         $this->entityManagerMock->expects($this->once())
             ->method('flush');

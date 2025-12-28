@@ -11,18 +11,17 @@ use InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Annotation\Route;
 
 class UserController extends AbstractController
 {
     public function __construct(
         private UserService $userService,
-        private UserPasswordHasherInterface $passwordHasher,
     ) {
     }
 
-    #[Route('/api/users/', name: 'api_users_create', methods: ['POST'])]
+    #[Route('/api/users/create', name: 'api_users_create', methods: ['POST'])]
     public function createUser(Request $request): JsonResponse
     {
         $data = $request->toArray();
@@ -31,7 +30,12 @@ class UserController extends AbstractController
             return new JsonResponse(['error' => 'Request body is empty'], 422);
         }
 
-        if (!isset($data['name']) || !isset($data['phone_number']) || !isset($data['password']) || !isset($data['roles'])) {
+        if (
+            !isset($data['name'])
+            || !isset($data['phone_number'])
+            || !isset($data['password'])
+            || !isset($data['roles'])
+        ) {
             return new JsonResponse([
                 'error' => 'Missing required fields',
             ], 400);

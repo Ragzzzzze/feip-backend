@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
-use App\Enum\BookingStatus;
-use App\Repository\BookingRepository;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Controller\BookingController;
+use App\Enum\BookingStatus;
+use App\Repository\BookingRepository;
+use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
 #[ORM\Table(name: 'bookings')]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/user/bookings',
+            controller: BookingController::class . '::getUserBookings',
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
+        ),
         new Post(
             uriTemplate: '/booking/create',
             controller: BookingController::class . '::appBookingCreate',
@@ -25,11 +30,6 @@ use App\Controller\BookingController;
         new Put(
             uriTemplate: '/booking',
             controller: BookingController::class . '::appBookingChangeCommentary',
-            security: 'is_granted("IS_AUTHENTICATED_FULLY")'
-        ),
-        new GetCollection(
-            uriTemplate: '/user/bookings',
-            controller: BookingController::class . '::getUserBookings',
             security: 'is_granted("IS_AUTHENTICATED_FULLY")'
         ),
     ]
